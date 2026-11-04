@@ -4,19 +4,10 @@ The obtained sam files from bowtie2 analysis, were filtered by an in-house ruby 
 
 ruby read_counts.rb sam_files_folder
 
-To run correctly this script, you need to build previously the gene_list.txt file (in our case, a modified version of Supplementary Table 2, removing first column and reordering the other columns), with contains 4 columns:
+To run correctly this script, you need to download phenotypes.txt file from https://bitbucket.org/genomicepidemiology/resfinder_db/src/master/phenotypes.txt, by:
 
-    Family: antibiotic family to which the ARG confer resistance to
+    wget https://bitbucket.org/genomicepidemiology/resfinder_db/src/master/phenotypes.txt
+    
+And run the script by:
 
-    Genefam: gene family build by CD-HIT alignment at 90% identity of ARG from ResFinder (and manually inspected to give the name according to the most abundant gene within each cluster or by the first number of the cluster within bla and addA genes)
-
-    Gene: gene name, removing everything after "_" from the hit
-
-    Hit: hit or gene name according to ResFinder database
-
-To obtain the Family, Gene and Hit columns information, we recommend to download the phenotypes.txt and all.fsa files from ResFinder (https://bitbucket.org/genomicepidemiology/resfinder_db/src/master/), to run CD-HIT and following script:
-
-cdhit -i all.fsa -o cdhit.txt -c 0.9
-ruby extract_cluster_table.rb
-
-You must curate (and add) the genefam column manually according to cluster and gene columns resulted.
+    ruby count_reads.rb sam_files_folder/
