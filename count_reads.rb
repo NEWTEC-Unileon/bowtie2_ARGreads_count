@@ -24,22 +24,15 @@ out2=File.new("report_different_match.txt","w")
 out3=File.new("report_different_family.txt","w")
 
 hfam={}
+hgen={}
 ff=File.open("phenotypes.txt").each_line do |line|
 line.chomp!
-cols=line.split("\t")
-hfam[cols[0]]=cols[1]
+col=line.split("\t")
+hfam[col[0]]=col[1]
+hgen[col[0]]=col[0].split("_")[0]
+genes << col[0]
 end
 ff.close
-
-genes=[]
-hgenes={}
-gg=File.open("gene_list.txt").each_line do |line|
-line.chomp!
-if line =~ /SN:(\S+)/
-genes << $1
-end
-end
-gg.close
 
 samples=[]
 hsamples={}
@@ -67,14 +60,14 @@ puts hsamples[sample]
 read=''
         bb=File.open("file2.sam").each_line do |line|
  	line.chomp!
-	cols=line.split("\t")
-	if cols[0]!=read
-	matrix[hsamples[sample]][hgenes[cols[2]]]+=1
-        elsif cols[6]!="="
+	col=line.split("\t")
+	if col[0]!=read
+	matrix[hsamples[sample]][hgenes[col[2]]]+=1
+        elsif col[6]!="="
 	out2.puts line
-		if hfam[cols[2]]!=hfam[cols[6]]
-		out3.puts "#{hfam[cols[2]]}\t#{hfam[cols[6]]}\t#{line}"
-		matrix[hsamples[sample]][hgenes[cols[2]]]+=1		
+		if hfam[col[2]]!=hfam[col[6]]
+		out3.puts "#{hfam[col[2]]}\t#{hfam[col[6]]}\t#{line}"
+		matrix[hsamples[sample]][hgenes[col[2]]]+=1		
 		end
 	end
    end
@@ -83,13 +76,15 @@ end
 end
 aa.close
 
-matfile=File.new("matrix_Resfinder.txt","w")
 mm=-1
-genes.each {|i| matfile.print "#{i}\t"}
-matfile.print "\n"
-matrix.each {|i| i.each {|x| matfile.print "#{x}\t"}}
-mm+=1
-matfile.print "#{samples[mm]}\n"
+salida.print "Antibiotic_family\tGene\tHit"
+samples.each {|i| salida.print "\t#{i}"}
+salida.print "\n"
+matrix.each {|i|  mm+=1
+salida.print "#{hfam[genes[mm]]}\t#{hgen[genes[mm]]}\t#{genes[mm]}"
+i.each {|value| salida.print "\t#{value}"}
+salida.print "\n"
+}
 
 puts "---------------------------------------------------------------"
 puts ""
